@@ -1,17 +1,32 @@
 {
+  "id": "/",
   "theme_color": "#0f1117",
   "background_color": "#0f1117",
   "display": "standalone",
   "scope": "/",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "name": "NumberBest",
   "short_name": "NumberBest",
   "description": "동행복권 공식 데이터 기반 로또 추첨기",
   "icons": [
     {
       "src": "icon.png",
-      "sizes": "512 x 512",
+      "sizes": "512x512",
       "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide"
     }
   ]
 }
