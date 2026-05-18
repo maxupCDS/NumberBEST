@@ -2,9 +2,16 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="비법로또">
+    <meta name="mobile-web-app-capable" content="yes">
+    
     <link rel="manifest" href="manifest.json">
-    <title>나만의 비법 로또 추첨기</title>
+    
+    <title>NumberBest</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
 
@@ -306,7 +313,7 @@
     <div class="card">
         <div class="api-badge">
             <div class="dot"></div>
-            실제 당첨번호 205회차 검증 내장 데이터 (1020~1224회)
+             실제 당첨번호 205회차 검증 내장 데이터 (1020~1224회)
         </div>
 
         <div class="input-label">
@@ -607,6 +614,15 @@ ${ratioLog}<br>
         btn.disabled = false;
         btn.textContent = '즉시 추첨 🎯';
     }, 300);
+}
+
+// 🌐 [PWA 필수] 스마트폰 시스템에 앱으로 최종 등록하는 주사기 스크립트
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log("서비스 워커 등록 성공:", reg.scope))
+        .catch(err => console.error("서비스 워커 등록 실패:", err));
+    });
 }
 </script>
 </body>
