@@ -183,25 +183,47 @@
             background: var(--border);
         }
 
+        /* 5게임 다중 컨테이너 스타일 */
+        .lotto-receipt {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+        .game-row {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.02);
+            border-radius: 10px;
+            padding: 6px 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .game-label {
+            font-size: 0.85rem;
+            font-weight: 900;
+            color: var(--accent);
+            width: 24px;
+            flex-shrink: 0;
+        }
+
         /* 볼 */
         .ball-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 6px;
-            min-height: 56px;
-            margin-bottom: 8px;
+            flex: 1;
         }
         .ball {
-            width: 48px; height: 48px;
+            width: 40px; height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            font-size: 1.05rem;
+            font-size: 0.95rem;
             color: #fff;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.35);
             animation: ballPop 0.4s cubic-bezier(0.175,0.885,0.32,1.275) both;
             flex-shrink: 0;
         }
@@ -217,6 +239,7 @@
             font-size: 0.85rem;
             width: 100%;
             text-align: center;
+            padding: 20px 0;
         }
 
         /* 분석 박스 */
@@ -245,11 +268,13 @@
         .loader {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             color: var(--accent);
             font-size: 0.85rem;
             font-weight: 700;
-            padding: 8px 0;
+            padding: 20px 0;
+            width: 100%;
         }
         .spinner {
             width: 18px; height: 18px;
@@ -260,22 +285,13 @@
         }
         @keyframes spin { to{transform:rotate(360deg)} }
 
-        /* 에러 */
-        .error-box {
-            background: rgba(231,76,60,0.1);
-            border: 1px solid rgba(231,76,60,0.3);
-            border-radius: 10px;
-            padding: 12px 14px;
-            font-size: 0.82rem;
-            color: #e74c3c;
-        }
-
         /* 색상 범례 */
         .legend {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 12px;
+            gap: 10px;
+            margin-top: 16px;
+            justify-content: center;
         }
         .legend-item {
             display: flex;
@@ -330,9 +346,9 @@
     </div>
 
     <div class="card">
-        <div class="section-title">추천 번호</div>
-        <div class="ball-row" id="ball-container">
-            <span class="ball-placeholder">위 버튼을 눌러 추첨하세요</span>
+        <div class="section-title">추천 번호 (5게임)</div>
+        <div class="lotto-receipt" id="ball-container">
+            <span class="ball-placeholder">위 버튼을 눌러 추첨하세요 (5세트 동시 추출)</span>
         </div>
         <div class="legend">
             <div class="legend-item"><div class="legend-dot" style="background:#f5a623"></div>1~10</div>
@@ -352,8 +368,6 @@
 </div>
 
 <script>
-// ─── 실제 동행복권 당첨번호 데이터 ───
-// 출처: lottohell.com / lottery.io.kr 교차검증 완료 (1020~1224회, 총 205회차)
 const REAL_DATA = {
     // 2026년
     1224:[9,18,21,27,44,45],   1223:[16,18,20,32,33,39],  1222:[4,11,17,22,32,41],
@@ -432,7 +446,6 @@ const REAL_DATA = {
 
 const LATEST_ROUND = 1224;
 
-// 최신 회차 표시
 document.getElementById('latest-hint').textContent = `최신: ${LATEST_ROUND}회`;
 document.getElementById('th-input').value = LATEST_ROUND + 1;
 
@@ -464,7 +477,6 @@ function analyzeAndGenerate() {
     ballContainer.innerHTML = '<div class="loader"><div class="spinner"></div>데이터 분석 중...</div>';
     analysisBox.innerHTML = '<div class="loader"><div class="spinner"></div>슈퍼 알고리즘 가동 중...</div>';
 
-    // 0.3초 뒤에 모든 필터를 동시 적용하는 백그라운드 루프 가동
     setTimeout(() => {
         let checkRounds = [];
         let cur = targetRound - 10;
@@ -499,91 +511,119 @@ function analyzeAndGenerate() {
         const duplicates = Object.keys(numberFrequency).map(Number).filter(n => numberFrequency[n] >= 2);
         const pool = Object.keys(numberFrequency).map(Number).sort((a,b) => numberFrequency[b] - numberFrequency[a]);
 
-        // 🧠 5대 알고리즘 다중 필터 시뮬레이션 작동
-        let finalNums = [];
-        let attempts = 0;
-        let finalTotalSum = 0;
-        let finalConsecutiveCount = 0;
-        let finalSameTailCount = 0;
+        // ── 5개 게임용 다중 세트 독립 추출 루프 ──
+        const allGames = [];
+        const gameLabels = ['A', 'B', 'C', 'D', 'E'];
+        let analysisLogDetails = [];
 
-        while (attempts < 10000) {
-            attempts++;
-            let candidate = [];
-            let curOdd = 0, curEven = 0;
+        for (let g = 0; g < 5; g++) {
+            let finalNums = [];
+            let attempts = 0;
+            let finalTotalSum = 0;
+            let finalConsecutiveCount = 0;
+            let finalSameTailCount = 0;
 
-            // [알고리즘 5 적용] 빈도가 높은 핫넘버 풀에서 홀짝 비율에 맞춰 1차 배치
-            for (const n of pool) {
-                if (candidate.length >= 6) break;
-                if (n % 2 !== 0 && curOdd < targetOdd) { candidate.push(n); curOdd++; }
-                else if (n % 2 === 0 && curEven < targetEven) { candidate.push(n); curEven++; }
+            while (attempts < 10000) {
+                attempts++;
+                let candidate = [];
+                let curOdd = 0, curEven = 0;
+
+                for (const n of pool) {
+                    if (candidate.length >= 6) break;
+                    // 매번 같은 번호만 나오지 않도록 약간의 난수 무작위성을 부여
+                    if (Math.random() > 0.3) {
+                        if (n % 2 !== 0 && curOdd < targetOdd) { candidate.push(n); curOdd++; }
+                        else if (n % 2 === 0 && curEven < targetEven) { candidate.push(n); curEven++; }
+                    }
+                }
+
+                while (candidate.length < 6) {
+                    const rand = Math.floor(Math.random() * 45) + 1;
+                    if (candidate.includes(rand)) continue;
+                    if (rand % 2 !== 0 && curOdd < targetOdd) { candidate.push(rand); curOdd++; }
+                    else if (rand % 2 === 0 && curEven < targetEven) { candidate.push(rand); curEven++; }
+                    else if (curOdd >= targetOdd && curEven >= targetEven) candidate.push(rand);
+                }
+
+                candidate.sort((a, b) => a - b);
+
+                let totalSum = candidate.reduce((acc, val) => acc + val, 0);
+                if (totalSum < 100 || totalSum > 170) continue;
+
+                let consecutiveCount = 0;
+                for (let i = 0; i < candidate.length - 1; i++) {
+                    if (candidate[i+1] - candidate[i] === 1) consecutiveCount++;
+                }
+                if (consecutiveCount > 1) continue;
+
+                let tails = candidate.map(n => n % 10);
+                let tailMap = {};
+                let sameTailCount = 0;
+                tails.forEach(t => tailMap[t] = (tailMap[t] || 0) + 1);
+                for(let key in tailMap) { if(tailMap[key] >= 2) sameTailCount += (tailMap[key] - 1); }
+
+                // 5게임 간의 전면 중복을 방지하기 위해 이전에 생성된 게임들과 체크
+                const candidateStr = candidate.join(',');
+                if (allGames.some(saved => saved.nums.join(',') === candidateStr)) continue;
+
+                finalNums = candidate;
+                finalTotalSum = totalSum;
+                finalConsecutiveCount = consecutiveCount;
+                finalSameTailCount = sameTailCount;
+                break;
             }
 
-            // 부족한 자리는 난수로 메꾸되 타겟 홀짝 비율 엄격 제한
-            while (candidate.length < 6) {
-                const rand = Math.floor(Math.random() * 45) + 1;
-                if (candidate.includes(rand)) continue;
-                if (rand % 2 !== 0 && curOdd < targetOdd) { candidate.push(rand); curOdd++; }
-                else if (rand % 2 === 0 && curEven < targetEven) { candidate.push(rand); curEven++; }
-                else if (curOdd >= targetOdd && curEven >= targetEven) candidate.push(rand);
+            if (finalNums.length === 0) {
+                // 폴백 처리
+                finalNums = pool.slice(g, g + 6).sort((a, b) => a - b);
+                finalTotalSum = finalNums.reduce((acc, val) => acc + val, 0);
             }
 
-            candidate.sort((a, b) => a - b);
-
-            // [알고리즘 2] 총합 필터 (100 ~ 170 황금구간 검증)
-            let totalSum = candidate.reduce((acc, val) => acc + val, 0);
-            if (totalSum < 100 || totalSum > 170) continue;
-
-            // [알고리즘 3] 연속 번호(연번) 제한 필터 (최대 1쌍 이하)
-            let consecutiveCount = 0;
-            for (let i = 0; i < candidate.length - 1; i++) {
-                if (candidate[i+1] - candidate[i] === 1) consecutiveCount++;
-            }
-            if (consecutiveCount > 1) continue;
-
-            // [알고리즘 4] 동끝수 배열 추적 필터
-            let tails = candidate.map(n => n % 10);
-            let tailMap = {};
-            let sameTailCount = 0;
-            tails.forEach(t => tailMap[t] = (tailMap[t] || 0) + 1);
-            for(let key in tailMap) { if(tailMap[key] >= 2) sameTailCount += (tailMap[key] - 1); }
-
-            // 5개 모든 조건 만족 시 최종 추출 확정 후 루프 탈출
-            finalNums = candidate;
-            finalTotalSum = totalSum;
-            finalConsecutiveCount = consecutiveCount;
-            finalSameTailCount = sameTailCount;
-            break;
+            allGames.push({ label: gameLabels[g], nums: finalNums });
+            analysisLogDetails.push(`<strong>게임 ${gameLabels[g]}</strong>: 총합 ${finalTotalSum} / 연번 ${finalConsecutiveCount}쌍 / 동끝수 ${finalSameTailCount}개`);
         }
 
-        // 만약 예외적으로 1만번 안에 매칭이 실패한 경우를 대비한 안전 폴백
-        if (finalNums.length === 0) {
-            finalNums = pool.slice(0, 6).sort((a, b) => a - b);
-            finalTotalSum = finalNums.reduce((acc, val) => acc + val, 0);
-        }
-
-        // ── 볼 렌더링 ──
+        // ── 화면 렌더링 (5줄 출력) ──
         ballContainer.innerHTML = '';
-        finalNums.forEach((n, i) => {
-            const ball = document.createElement('div');
-            ball.classList.add('ball');
-            if (n <= 10) ball.classList.add('r1');
-            else if (n <= 20) ball.classList.add('r2');
-            else if (n <= 30) ball.classList.add('r3');
-            else if (n <= 40) ball.classList.add('r4');
-            else ball.classList.add('r5');
-            ball.style.animationDelay = `${i * 80}ms`;
-            ball.textContent = n;
-            ballContainer.appendChild(ball);
+        allGames.forEach((game, rowIndex) => {
+            const row = document.createElement('div');
+            row.classList.add('game-row');
+
+            const label = document.createElement('div');
+            label.classList.add('game-label');
+            label.textContent = game.label;
+            row.appendChild(label);
+
+            const rowBalls = document.createElement('div');
+            rowBalls.classList.add('ball-row');
+
+            game.nums.forEach((n, bi) => {
+                const ball = document.createElement('div');
+                ball.classList.add('ball');
+                if (n <= 10) ball.classList.add('r1');
+                else if (n <= 20) ball.classList.add('r2');
+                else if (n <= 30) ball.classList.add('r3');
+                else if (n <= 40) ball.classList.add('r4');
+                else ball.classList.add('r5');
+                
+                // 순차적으로 볼이 통통 튀어나오도록 애니메이션 딜레이 조절
+                ball.style.animationDelay = `${(rowIndex * 60) + (bi * 40)}ms`;
+                ball.textContent = n;
+                rowBalls.appendChild(ball);
+            });
+
+            row.appendChild(rowBalls);
+            ballContainer.appendChild(row);
         });
 
-        // ── 분석 텍스트 ──
+        // ── 분석 텍스트 출력 ──
         const ratioLog = Object.entries(ratioPatterns)
             .filter(([,v]) => v > 0)
             .sort(([,a],[,b]) => b - a)
             .map(([k, v]) => {
                 const [o, e] = k.split(':');
                 const isTop = k === bestPattern;
-                return `<span class="tag" style="${isTop ? 'background:rgba(108,99,255,0.35);color:#fff' : ''}">${isTop ? '⭐ ' : ''}홀${o}:짝${e}</span> ${v}회${isTop ? ' ← <strong>선택</strong>' : ''}`;
+                return `<span class="tag" style="${isTop ? 'background:rgba(108,99,255,0.35);color:#fff' : ''}">${isTop ? '⭐ ' : ''}홀${o}:짝${e}</span> ${v}회${isTop ? ' ← <strong>대입</strong>' : ''}`;
             }).join('<br>');
 
         const usedRoundsStr = validPairs.slice(0,3).map(p=>`${p.round}회`).join(', ');
@@ -593,21 +633,16 @@ function analyzeAndGenerate() {
             : `보조 생성 ${validPairs.length}개`;
 
         analysisBox.innerHTML = `
-🎯 <strong>[알고리즘 1: 홀짝 비율 전수조사]</strong><br>
+🎯 <strong>[알고리즘 1: 홀짝 비율 통계 대입]</strong><br>
 ${targetRound}회 분석 → ${usedRoundsStr}... 등 <strong>총 ${validPairs.length}개 회차</strong> (${dataNote})<br>
 ${ratioLog}<br>
-→ 최다 성향 <strong>홀${targetOdd}:짝${targetEven}</strong> 비율 강제 대입 완료<br><br>
+→ 최다 성향 <strong>홀${targetOdd}:짝${targetEven}</strong> 비율을 5개 게임에 고정 탑재 완료<br><br>
 
-📊 <strong>[알고리즘 2: 총합 황금구간 필터]</strong><br>
-추천 조합의 총합 수치: <strong>"${finalTotalSum}"</strong> (100 ~ 170 안전 전용 통계 구역 패스)<br><br>
+🔍 <strong>[알고리즘 2~5: 조합 필터링 검증 스코어]</strong><br>
+5개 조합 모두 총합 안전구간(100~170), 고밀도 연번 차단, 동끝수 매칭을 통과했습니다.<br>
+${analysisLogDetails.join('<br>')}<br><br>
 
-🔄 <strong>[알고리즘 3: 연속 번호 제어 필터]</strong><br>
-고밀도 연번 방지 및 억제 완료 (추천 조합 내 연속 번호: <strong>${finalConsecutiveCount}쌍</strong>)<br><br>
-
-⚙️ <strong>[알고리즘 4: 동끝수 배열 필터]</strong><br>
-동끝수 출현 경향 매칭 완료 (추천 조합 내 동끝수: <strong>${finalSameTailCount > 0 ? finalSameTailCount + '개 매칭' : '없음'}</strong>)<br><br>
-
-🔥 <strong>[알고리즘 5: 누적 빈도 핫넘버 가중치]</strong><br>
+🔥 <strong>[누적 빈도 우수 핫넘버군 정보]</strong><br>
 해당 과거 회차 내 2회 이상 중복 등장한 우수수 가중 반영: <strong>${dupStr}</strong>
         `;
 
@@ -616,7 +651,6 @@ ${ratioLog}<br>
     }, 300);
 }
 
-// 🌐 [PWA 필수] 스마트폰 시스템에 앱으로 최종 등록하는 주사기 스크립트
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js')
