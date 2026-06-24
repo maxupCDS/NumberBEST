@@ -1,257 +1,90 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="NumberBest">
-    <meta name="mobile-web-app-capable" content="yes">
-    
-    <link rel="manifest" href="manifest.json">
-    
-    <title>NumberBest - 비법 추출기 PRO</title>
+    <title>Maxup 로또 추첨기 PRO</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght=400;700;900&display=swap');
-
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
         :root {
-            --bg: #0f1117;
-            --card: #1a1d27;
-            --card2: #21253a;
-            --accent: #6c63ff;
-            --accent2: #ff6584;
-            --text: #e8eaf6;
-            --muted: #7b80a0;
-            --border: rgba(108,99,255,0.2);
-            --ball1: #f5a623; --ball2: #4a90e2; --ball3: #e74c3c; --ball4: #9b59b6; --ball5: #27ae60;
+            --bg: #0f1117; --card: #1a1d27; --accent: #6c63ff; --text: #e8eaf6;
+            --muted: #7b80a0; --border: rgba(108,99,255,0.2);
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            padding: 12px 10px 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-x: hidden;
+            font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text);
+            min-height: 100vh; padding: 12px 10px 30px; display: flex;
+            flex-direction: column; align-items: center; overflow-x: hidden;
         }
-
         body::before {
-            content: '';
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(108,99,255,0.12) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
+            pointer-events: none; z-index: 0;
         }
-
-        .container {
-            width: 100%;
-            max-width: 440px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 16px;
-        }
+        .container { width: 100%; max-width: 440px; position: relative; z-index: 1; }
+        .header { text-align: center; margin-bottom: 16px; }
         .header .emoji { font-size: 2rem; display: block; margin-bottom: 4px; }
         .header h1 {
-            font-size: 1.25rem;
-            font-weight: 900;
-            letter-spacing: -0.5px;
+            font-size: 1.25rem; font-weight: 900; letter-spacing: -0.5px;
             background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
-        .header p {
-            font-size: 0.75rem;
-            color: var(--muted);
-            margin-top: 4px;
-        }
-
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 14px;
-            margin-bottom: 12px;
-        }
-
+        .header p { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px; margin-bottom: 12px; }
         .api-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(39,174,96,0.1);
-            border: 1px solid rgba(39,174,96,0.25);
-            border-radius: 8px;
-            padding: 8px 10px;
-            font-size: 0.72rem;
-            color: #2ecc71;
-            font-weight: 700;
-            margin-bottom: 12px;
-            line-height: 1.3;
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(39,174,96,0.1); border: 1px solid rgba(39,174,96,0.25);
+            border-radius: 8px; padding: 8px 10px; font-size: 0.72rem; color: #2ecc71;
+            font-weight: 700; margin-bottom: 12px; line-height: 1.3;
         }
-        .api-badge .dot {
-            width: 6px; height: 6px;
-            background: #2ecc71;
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-            flex-shrink: 0;
-        }
+        .api-badge .dot { width: 6px; height: 6px; background: #2ecc71; border-radius: 50%; animation: pulse 2s ease-in-out infinite; flex-shrink: 0; }
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
-
-        .input-label {
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--muted);
-            margin-bottom: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .round-hint {
-            font-size: 0.7rem;
-            color: var(--accent);
-            background: rgba(108,99,255,0.1);
-            padding: 1px 6px;
-            border-radius: 12px;
-        }
-        .input-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-        
-        .filter-section {
-            background: rgba(255,255,255,0.02);
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 8px;
-            border: 1px dashed rgba(108,99,255,0.15);
-        }
-        .filter-row {
-            margin-bottom: 14px;
-        }
+        .input-label { font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .round-hint { font-size: 0.7rem; color: var(--accent); background: rgba(108,99,255,0.1); padding: 1px 6px; border-radius: 12px; }
+        .input-row { display: flex; gap: 8px; margin-bottom: 10px; }
+        .filter-section { background: rgba(255,255,255,0.02); border-radius: 12px; padding: 12px; margin-top: 8px; border: 1px dashed rgba(108,99,255,0.15); }
+        .filter-row { margin-bottom: 14px; }
         .filter-row:last-child { margin-bottom: 0; }
-        .filter-title {
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: #c5c9e0;
-            margin-bottom: 8px;
-        }
-        .filter-inputs {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 8px;
-        }
-        .filter-inputs input[type=number] {
-            padding: 10px 4px;
-            font-size: 0.95rem;
-            text-align: center;
-            border-radius: 8px;
-            height: 42px;
-        }
+        .filter-title { font-size: 0.78rem; font-weight: 700; color: #c5c9e0; margin-bottom: 8px; }
+        .filter-inputs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .filter-inputs input[type=number] { padding: 10px 4px; font-size: 0.95rem; text-align: center; border-radius: 8px; height: 42px; }
         .fix-input { border-color: rgba(39,174,96,0.3) !important; color: #2ecc71 !important; }
         .ex-input { border-color: rgba(231,76,60,0.3) !important; color: #e74c3c !important; }
-
         input[type=number] {
-            flex: 1;
-            padding: 10px 12px;
-            background: #0f1117;
-            border: 1.5px solid var(--border);
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text);
-            font-family: inherit;
-            transition: border-color 0.2s;
-            -moz-appearance: textfield;
+            flex: 1; padding: 10px 12px; background: #0f1117;
+            border: 1.5px solid var(--border); border-radius: 10px;
+            font-size: 1rem; font-weight: 700; color: var(--text); font-family: inherit;
+            transition: border-color 0.2s; -moz-appearance: textfield;
         }
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
         input[type=number]:focus { outline: none; border-color: var(--accent); }
-
         .btn {
-            padding: 10px 16px;
-            background: linear-gradient(135deg, var(--accent), #8b5cf6);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: opacity 0.2s, transform 0.1s;
+            padding: 10px 16px; background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            color: #fff; border: none; border-radius: 10px; font-size: 0.9rem;
+            font-weight: 700; cursor: pointer; white-space: nowrap; transition: opacity 0.2s, transform 0.1s;
         }
         .btn:active { opacity: 0.85; transform: scale(0.97); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
         .section-title {
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-size: 0.78rem; font-weight: 700; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 6px;
         }
-        .section-title::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-        }
-
-        .lotto-receipt {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            width: 100%;
-        }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+        .lotto-receipt { display: flex; flex-direction: column; gap: 8px; width: 100%; }
         .game-row {
-            display: flex;
-            align-items: center;
-            background: rgba(255,255,255,0.02);
-            border-radius: 8px;
-            padding: 6px 8px;
-            border: 1px solid rgba(255,255,255,0.04);
+            display: flex; align-items: center; background: rgba(255,255,255,0.02);
+            border-radius: 8px; padding: 6px 8px; border: 1px solid rgba(255,255,255,0.04);
         }
-        .game-label {
-            font-size: 0.8rem;
-            font-weight: 900;
-            color: var(--accent);
-            width: 18px;
-            flex-shrink: 0;
-        }
-
-        .ball-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 4px;
-            flex: 1;
-        }
+        .game-label { font-size: 0.8rem; font-weight: 900; color: var(--accent); width: 18px; flex-shrink: 0; }
+        .ball-row { display: flex; justify-content: space-between; align-items: center; gap: 4px; flex: 1; }
         .ball {
-            width: 35px; height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: 0.85rem;
-            color: #fff;
+            width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-weight: 900; font-size: 0.85rem; color: #fff;
             box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-            animation: ballPop 0.4s cubic-bezier(0.175,0.885,0.32,1.275) both;
-            flex-shrink: 0;
+            animation: ballPop 0.4s cubic-bezier(0.175,0.885,0.32,1.275) both; flex-shrink: 0;
         }
         @keyframes ballPop { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
         .ball.r1{background:linear-gradient(135deg,#f5a623,#f39c12);}
@@ -259,71 +92,28 @@
         .ball.r3{background:linear-gradient(135deg,#e74c3c,#c0392b);}
         .ball.r4{background:linear-gradient(135deg,#9b59b6,#8e44ad);}
         .ball.r5{background:linear-gradient(135deg,#27ae60,#219a52);}
-
-        .ball-placeholder {
-            color: var(--muted);
-            font-size: 0.78rem;
-            width: 100%;
-            text-align: center;
-            padding: 15px 0;
-        }
-
-        /* 상세 결과 분석창 레이아웃 고도화 */
+        .ball-placeholder { color: var(--muted); font-size: 0.78rem; width: 100%; text-align: center; padding: 15px 0; }
         .analysis-box {
-            background: #0f1117;
-            border-radius: 10px;
-            padding: 14px;
-            font-size: 0.78rem;
-            line-height: 1.65;
-            color: #c5c9e0;
-            height: auto;
-            min-height: 60px;
-            word-break: break-all;
-            overflow: visible;
+            background: #0f1117; border-radius: 10px; padding: 14px; font-size: 0.78rem;
+            line-height: 1.65; color: #c5c9e0; min-height: 60px; word-break: break-all;
         }
         .analysis-box strong { color: #fff; }
-        .report-section {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px dashed rgba(255,255,255,0.08);
-        }
+        .report-section { margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.08); }
         .report-line {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 4px;
-            background: rgba(255,255,255,0.01);
-            padding: 4px 6px;
-            border-radius: 4px;
+            display: flex; justify-content: space-between; margin-bottom: 4px;
+            background: rgba(255,255,255,0.01); padding: 4px 6px; border-radius: 4px;
         }
-
-        .legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-            justify-content: center;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.68rem;
-            color: var(--muted);
-        }
-        .legend-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-        }
-
+        .cycle-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.72rem; }
+        .cycle-table th { color: var(--accent); padding: 4px 6px; text-align: left; border-bottom: 1px solid rgba(108,99,255,0.2); }
+        .cycle-table td { padding: 3px 6px; color: #c5c9e0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .cycle-table tr:last-child td { border-bottom: none; }
+        .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; justify-content: center; }
+        .legend-item { display: flex; align-items: center; gap: 4px; font-size: 0.68rem; color: var(--muted); }
+        .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
         .info-box {
-            background: rgba(108,99,255,0.05);
-            border: 1px solid rgba(108,99,255,0.15);
-            border-radius: 8px;
-            padding: 8px 10px;
-            font-size: 0.72rem;
-            color: var(--muted);
-            margin-top: 10px;
-            line-height: 1.4;
+            background: rgba(108,99,255,0.05); border: 1px solid rgba(108,99,255,0.15);
+            border-radius: 8px; padding: 8px 10px; font-size: 0.72rem; color: var(--muted);
+            margin-top: 10px; line-height: 1.4;
         }
         .info-box span { color: var(--accent); font-weight: 700; }
     </style>
@@ -333,21 +123,21 @@
     <div class="header">
         <span class="emoji">🔮</span>
         <h1>Maxup 로또 추첨기 PRO</h1>
-        <p>전략적 고정수 / 제외수 커스텀 필터 탑재</p>
+        <p>10회 주기별 끊어 분석 필터 탑재</p>
     </div>
 
     <div class="card">
         <div class="api-badge">
             <div class="dot"></div>
-             실제 당첨번호 205회차 검증 내장 데이터 (1020~1224회)
+            실제 당첨번호 210회차 내장 데이터 (1020~1229회) · 10회 주기 분석
         </div>
 
         <div class="input-label">
             <span>분석할 회차 및 마스터 조건</span>
-            <span class="round-hint" id="latest-hint">최신 회차 확인 중...</span>
+            <span class="round-hint" id="latest-hint">최신: 1229회</span>
         </div>
         <div class="input-row">
-            <input type="number" id="th-input" value="1225" min="1" max="9999">
+            <input type="number" id="th-input" min="1" max="9999" placeholder="회차 입력">
             <button class="btn" onclick="analyzeAndGenerate()" id="run-btn">즉시 추첨 🎯</button>
         </div>
 
@@ -387,9 +177,8 @@
                 </div>
             </div>
         </div>
-
         <div class="info-box">
-            ⚡ 원하는 칸만 채워 사용하세요. <span>고정수</span>는 매 게임 무조건 배치되며, <span>제외수</span>는 추첨 대상에서 완전 제외됩니다.
+            ⚡ <span>10회 주기 분석</span>: 입력 회차 기준으로 -10, -20, -30... 간격의 회차를 1020회까지 역추적해 패턴을 추출합니다.
         </div>
     </div>
 
@@ -410,239 +199,103 @@
     <div class="card">
         <div class="section-title">📊 알고리즘 분석 결과</div>
         <div class="analysis-box" id="analysis-box">
-            버튼을 누르면 핵심 필터링 원리(홀짝, 총합, 연번, 동끝수)에 대한 합격 리포트가 무삭제 풀 버전으로 표시됩니다.
+            버튼을 누르면 10회 주기 분석 결과 및 각 게임 상세 리포트가 표시됩니다.
         </div>
     </div>
 </div>
 
 <script>
 const REAL_DATA = {
-1020:[12,27,29,38,41,45],
-1021:[12,15,17,24,29,45],
-1022:[5,6,11,29,42,44],
-1023:[10,14,16,18,29,35],
-1024:[9,18,20,22,38,44],
-1025:[10,13,25,29,32,40],
-1026:[1,3,10,21,34,35],
-1027:[10,11,12,19,31,38],
-1028:[8,9,27,31,36,41],
-1029:[3,9,12,15,24,33],
-1030:[5,24,25,29,30,31],
-1031:[6,19,24,25,30,33],
-1032:[15,17,23,26,28,37],
-1033:[16,18,20,31,34,44],
-1034:[13,18,30,31,32,39],
-1035:[6,12,13,14,25,36],
-1036:[15,24,26,31,37,41],
-1037:[1,3,4,18,24,33],
-1038:[2,3,13,23,25,42],
-1039:[8,9,19,22,37,39],
-1040:[4,10,14,23,27,29],
-1041:[4,6,10,14,23,29],
-1042:[7,11,16,21,23,39],
-1043:[4,9,13,23,26,28],
-1044:[1,8,13,30,32,35],
-1045:[20,21,31,32,38,40],
-1046:[14,18,24,28,30,31],
-1047:[9,21,22,24,37,40],
-1048:[3,6,9,11,23,32],
-1049:[8,10,12,16,24,35],
-1050:[5,15,24,33,36,39],
-1051:[1,8,14,18,29,36],
-1052:[3,5,6,14,15,16],
-1053:[10,17,20,21,28,38],
-1054:[10,23,24,25,30,41],
-1055:[4,14,15,16,27,29],
-1056:[6,8,22,29,30,36],
-1057:[4,8,14,24,32,35],
-1058:[12,13,18,21,24,29],
-1059:[3,6,11,22,26,35],
-1060:[2,4,6,10,31,44],
-1061:[9,15,17,21,26,32],
-1062:[8,14,19,21,22,32],
-1063:[7,9,15,22,25,29],
-1064:[10,16,17,19,22,30],
-1065:[3,5,12,16,18,20],
-1066:[3,7,9,20,26,30],
-1067:[9,15,26,33,38,44],
-1068:[1,3,6,16,24,27],
-1069:[8,9,11,19,26,29],
-1070:[7,12,24,27,39,42],
-1071:[4,6,13,17,29,32],
-1072:[2,18,22,25,29,31],
-1073:[12,14,30,33,38,40],
-1074:[7,21,23,26,41,43],
-1075:[8,11,24,25,33,35],
-1076:[13,26,27,35,38,40],
-1077:[6,16,19,20,21,30],
-1078:[6,8,16,20,23,42],
-1079:[2,5,6,11,25,32],
-1080:[9,20,21,24,28,33],
-1081:[3,6,17,18,26,41],
-1082:[8,9,11,16,21,44],
-1083:[4,5,9,17,22,27],
-1084:[2,10,12,17,25,26],
-1085:[4,16,17,21,35,36],
-1086:[2,13,14,26,28,31],
-1087:[9,12,21,30,32,42],
-1088:[5,13,14,20,22,34],
-1089:[5,15,21,23,26,28],
-1090:[7,15,19,21,25,34],
-1091:[8,12,19,26,29,35],
-1092:[6,11,15,26,31,32],
-1093:[1,7,24,26,27,34],
-1094:[1,5,8,11,22,24],
-1095:[4,10,16,21,23,24],
-1096:[2,4,12,15,31,34],
-1097:[1,12,19,21,27,36],
-1098:[12,13,14,27,31,39],
-1099:[4,9,10,17,21,37],
-1100:[17,26,29,30,31,43],
-1101:[1,10,11,16,22,23],
-1102:[3,4,13,17,19,30],
-1103:[4,5,11,23,26,27],
-1104:[4,11,14,15,16,26],
-1105:[4,7,17,20,25,27],
-1106:[5,12,13,21,25,36],
-1107:[1,5,12,14,18,40],
-1108:[11,18,23,27,28,34],
-1109:[6,16,24,25,28,32],
-1110:[6,10,14,18,31,34],
-1111:[5,8,12,13,25,29],
-1112:[1,4,22,24,26,37],
-1113:[3,8,10,17,18,24],
-1114:[9,13,24,26,40,42],
-1115:[4,8,14,20,26,38],
-1116:[8,13,22,30,34,42],
-1117:[16,21,24,27,28,37],
-1118:[5,9,15,16,23,35],
-1119:[4,6,8,9,18,21],
-1120:[3,15,17,19,24,29],
-1121:[7,8,13,17,19,23],
-1122:[5,25,32,33,35,41],
-1123:[2,3,10,17,22,34],
-1124:[3,9,13,20,30,32],
-1125:[8,13,14,21,24,31],
-1126:[5,17,29,33,35,36],
-1127:[2,3,15,16,20,34],
-1128:[4,10,14,15,17,24],
-1129:[1,2,10,16,18,22],
-1130:[4,13,20,22,26,29],
-1131:[7,8,9,10,23,28],
-1132:[2,19,22,25,32,35],
-1133:[3,6,15,17,19,23],
-1134:[8,17,18,25,31,35],
-1135:[3,13,15,23,24,27],
-1136:[12,13,15,19,27,42],
-1137:[2,5,6,10,11,22],
-1138:[2,14,22,25,38,42],
-1139:[6,18,21,23,24,25],
-1140:[3,4,6,24,34,42],
-1141:[2,3,18,26,34,38],
-1142:[1,2,3,8,10,33],
-1143:[4,13,17,21,24,38],
-1144:[7,17,18,31,39,40],
-1145:[6,14,22,23,35,41],
-1146:[2,8,16,17,19,22],
-1147:[14,18,19,20,31,32],
-1148:[2,3,26,29,30,34],
-1149:[12,23,30,37,39,41],
-1150:[8,9,18,35,39,45],
-1151:[7,9,30,32,34,37],
-1152:[8,10,11,12,19,25],
-1153:[1,10,12,29,34,38],
-1154:[4,10,16,25,26,35],
-1155:[18,20,21,24,28,33],
-1156:[2,8,12,14,19,31],
-1157:[1,4,26,28,32,42],
-1158:[4,6,20,25,40,42],
-1159:[1,8,12,24,30,33],
-1160:[2,18,19,22,25,33],
-1161:[2,3,9,24,31,41],
-1162:[6,22,23,30,35,42],
-1163:[8,13,16,31,33,36],
-1164:[1,3,6,20,22,32],
-1165:[11,14,19,20,27,38],
-1166:[6,10,12,18,21,30],
-1167:[6,9,16,33,38,42],
-1168:[4,8,17,18,21,24],
-1169:[6,12,13,18,19,31],
-1170:[9,22,27,29,36,40],
-1171:[14,16,22,29,39,40],
-1172:[7,12,14,35,37,38],
-1173:[17,21,23,25,28,29],
-1174:[3,8,12,15,18,34],
-1175:[4,14,19,21,24,29],
-1176:[1,4,5,12,15,24],
-1177:[18,19,26,33,40,41],
-1178:[8,10,14,17,27,28],
-1179:[1,8,16,18,22,31],
-1180:[4,8,10,19,26,33],
-1181:[4,5,10,13,14,39],
-1182:[16,26,27,36,39,44],
-1183:[6,12,19,32,34,35],
-1184:[6,8,9,10,13,14],
-1185:[7,9,15,16,19,27],
-1186:[4,5,9,17,20,25],
-1187:[14,17,21,26,32,36],
-1188:[6,13,30,32,33,35],
-1189:[4,6,10,12,22,24],
-1190:[3,8,23,24,29,37],
-1191:[2,9,10,32,35,38],
-1192:[3,10,18,20,28,37],
-1193:[8,18,19,26,27,30],
-1194:[1,7,20,26,35,41],
-1195:[11,14,15,24,33,34],
-1196:[2,5,7,26,28,30],
-1197:[4,8,24,31,34,36],
-1198:[1,13,20,24,29,38],
-1199:[4,5,8,9,22,39],
-1200:[1,2,4,16,20,32],
-1201:[17,19,34,36,42,44],
-1202:[2,8,14,20,21,31],
-1203:[3,4,12,25,30,31],
-1204:[10,13,14,31,35,37],
-1205:[4,16,17,20,21,28],
-1206:[6,11,15,20,28,44],
-1207:[10,14,26,27,34,39],
-1208:[5,7,11,14,25,34],
-1209:[7,16,23,25,27,29],
-1210:[1,8,13,21,23,32],
-1211:[3,15,26,32,37,39],
-1212:[2,3,14,25,30,32],
-1213:[4,12,17,20,30,40],
-1214:[4,11,16,18,25,31],
-1215:[5,22,23,27,28,41],
-1216:[7,10,14,16,21,34],
-1217:[1,12,14,15,29,38],
-1218:[15,26,31,38,40,43],
-1219:[5,9,10,20,33,40],
-1220:[2,5,11,12,16,17],
-1221:[2,24,27,32,33,43],
-1222:[3,7,14,16,29,34],
-1223:[3,4,12,15,21,22],
-1224:[3,19,20,27,35,36],
-1225:[7,18,20,21,39,43],
-1226:[4,6,13,17,26,28],
-1227:[1,14,16,34,41,44],
-1228:[24,29,30,31,35,44],
-1229:[12,13,29,34,37,42]
+1020:[12,27,29,38,41,45],1021:[12,15,17,24,29,45],1022:[5,6,11,29,42,44],
+1023:[10,14,16,18,29,35],1024:[9,18,20,22,38,44],1025:[10,13,25,29,32,40],
+1026:[1,3,10,21,34,35],1027:[10,11,12,19,31,38],1028:[8,9,27,31,36,41],
+1029:[3,9,12,15,24,33],1030:[5,24,25,29,30,31],1031:[6,19,24,25,30,33],
+1032:[15,17,23,26,28,37],1033:[16,18,20,31,34,44],1034:[13,18,30,31,32,39],
+1035:[6,12,13,14,25,36],1036:[15,24,26,31,37,41],1037:[1,3,4,18,24,33],
+1038:[2,3,13,23,25,42],1039:[8,9,19,22,37,39],1040:[4,10,14,23,27,29],
+1041:[4,6,10,14,23,29],1042:[7,11,16,21,23,39],1043:[4,9,13,23,26,28],
+1044:[1,8,13,30,32,35],1045:[20,21,31,32,38,40],1046:[14,18,24,28,30,31],
+1047:[9,21,22,24,37,40],1048:[3,6,9,11,23,32],1049:[8,10,12,16,24,35],
+1050:[5,15,24,33,36,39],1051:[1,8,14,18,29,36],1052:[3,5,6,14,15,16],
+1053:[10,17,20,21,28,38],1054:[10,23,24,25,30,41],1055:[4,14,15,16,27,29],
+1056:[6,8,22,29,30,36],1057:[4,8,14,24,32,35],1058:[12,13,18,21,24,29],
+1059:[3,6,11,22,26,35],1060:[2,4,6,10,31,44],1061:[9,15,17,21,26,32],
+1062:[8,14,19,21,22,32],1063:[7,9,15,22,25,29],1064:[10,16,17,19,22,30],
+1065:[3,5,12,16,18,20],1066:[3,7,9,20,26,30],1067:[9,15,26,33,38,44],
+1068:[1,3,6,16,24,27],1069:[8,9,11,19,26,29],1070:[7,12,24,27,39,42],
+1071:[4,6,13,17,29,32],1072:[2,18,22,25,29,31],1073:[12,14,30,33,38,40],
+1074:[7,21,23,26,41,43],1075:[8,11,24,25,33,35],1076:[13,26,27,35,38,40],
+1077:[6,16,19,20,21,30],1078:[6,8,16,20,23,42],1079:[2,5,6,11,25,32],
+1080:[9,20,21,24,28,33],1081:[3,6,17,18,26,41],1082:[8,9,11,16,21,44],
+1083:[4,5,9,17,22,27],1084:[2,10,12,17,25,26],1085:[4,16,17,21,35,36],
+1086:[2,13,14,26,28,31],1087:[9,12,21,30,32,42],1088:[5,13,14,20,22,34],
+1089:[5,15,21,23,26,28],1090:[7,15,19,21,25,34],1091:[8,12,19,26,29,35],
+1092:[6,11,15,26,31,32],1093:[1,7,24,26,27,34],1094:[1,5,8,11,22,24],
+1095:[4,10,16,21,23,24],1096:[2,4,12,15,31,34],1097:[1,12,19,21,27,36],
+1098:[12,13,14,27,31,39],1099:[4,9,10,17,21,37],1100:[17,26,29,30,31,43],
+1101:[1,10,11,16,22,23],1102:[3,4,13,17,19,30],1103:[4,5,11,23,26,27],
+1104:[4,11,14,15,16,26],1105:[4,7,17,20,25,27],1106:[5,12,13,21,25,36],
+1107:[1,5,12,14,18,40],1108:[11,18,23,27,28,34],1109:[6,16,24,25,28,32],
+1110:[6,10,14,18,31,34],1111:[5,8,12,13,25,29],1112:[1,4,22,24,26,37],
+1113:[3,8,10,17,18,24],1114:[9,13,24,26,40,42],1115:[4,8,14,20,26,38],
+1116:[8,13,22,30,34,42],1117:[16,21,24,27,28,37],1118:[5,9,15,16,23,35],
+1119:[4,6,8,9,18,21],1120:[3,15,17,19,24,29],1121:[7,8,13,17,19,23],
+1122:[5,25,32,33,35,41],1123:[2,3,10,17,22,34],1124:[3,9,13,20,30,32],
+1125:[8,13,14,21,24,31],1126:[5,17,29,33,35,36],1127:[2,3,15,16,20,34],
+1128:[4,10,14,15,17,24],1129:[1,2,10,16,18,22],1130:[4,13,20,22,26,29],
+1131:[7,8,9,10,23,28],1132:[2,19,22,25,32,35],1133:[3,6,15,17,19,23],
+1134:[8,17,18,25,31,35],1135:[3,13,15,23,24,27],1136:[12,13,15,19,27,42],
+1137:[2,5,6,10,11,22],1138:[2,14,22,25,38,42],1139:[6,18,21,23,24,25],
+1140:[3,4,6,24,34,42],1141:[2,3,18,26,34,38],1142:[1,2,3,8,10,33],
+1143:[4,13,17,21,24,38],1144:[7,17,18,31,39,40],1145:[6,14,22,23,35,41],
+1146:[2,8,16,17,19,22],1147:[14,18,19,20,31,32],1148:[2,3,26,29,30,34],
+1149:[12,23,30,37,39,41],1150:[8,9,18,35,39,45],1151:[7,9,30,32,34,37],
+1152:[8,10,11,12,19,25],1153:[1,10,12,29,34,38],1154:[4,10,16,25,26,35],
+1155:[18,20,21,24,28,33],1156:[2,8,12,14,19,31],1157:[1,4,26,28,32,42],
+1158:[4,6,20,25,40,42],1159:[1,8,12,24,30,33],1160:[2,18,19,22,25,33],
+1161:[2,3,9,24,31,41],1162:[6,22,23,30,35,42],1163:[8,13,16,31,33,36],
+1164:[1,3,6,20,22,32],1165:[11,14,19,20,27,38],1166:[6,10,12,18,21,30],
+1167:[6,9,16,33,38,42],1168:[4,8,17,18,21,24],1169:[6,12,13,18,19,31],
+1170:[9,22,27,29,36,40],1171:[14,16,22,29,39,40],1172:[7,12,14,35,37,38],
+1173:[17,21,23,25,28,29],1174:[3,8,12,15,18,34],1175:[4,14,19,21,24,29],
+1176:[1,4,5,12,15,24],1177:[18,19,26,33,40,41],1178:[8,10,14,17,27,28],
+1179:[1,8,16,18,22,31],1180:[4,8,10,19,26,33],1181:[4,5,10,13,14,39],
+1182:[16,26,27,36,39,44],1183:[6,12,19,32,34,35],1184:[6,8,9,10,13,14],
+1185:[7,9,15,16,19,27],1186:[4,5,9,17,20,25],1187:[14,17,21,26,32,36],
+1188:[6,13,30,32,33,35],1189:[4,6,10,12,22,24],1190:[3,8,23,24,29,37],
+1191:[2,9,10,32,35,38],1192:[3,10,18,20,28,37],1193:[8,18,19,26,27,30],
+1194:[1,7,20,26,35,41],1195:[11,14,15,24,33,34],1196:[2,5,7,26,28,30],
+1197:[4,8,24,31,34,36],1198:[1,13,20,24,29,38],1199:[4,5,8,9,22,39],
+1200:[1,2,4,16,20,32],1201:[17,19,34,36,42,44],1202:[2,8,14,20,21,31],
+1203:[3,4,12,25,30,31],1204:[10,13,14,31,35,37],1205:[4,16,17,20,21,28],
+1206:[6,11,15,20,28,44],1207:[10,14,26,27,34,39],1208:[5,7,11,14,25,34],
+1209:[7,16,23,25,27,29],1210:[1,8,13,21,23,32],1211:[3,15,26,32,37,39],
+1212:[2,3,14,25,30,32],1213:[4,12,17,20,30,40],1214:[4,11,16,18,25,31],
+1215:[5,22,23,27,28,41],1216:[7,10,14,16,21,34],1217:[1,12,14,15,29,38],
+1218:[15,26,31,38,40,43],1219:[5,9,10,20,33,40],1220:[2,5,11,12,16,17],
+1221:[2,24,27,32,33,43],1222:[3,7,14,16,29,34],1223:[3,4,12,15,21,22],
+1224:[3,19,20,27,35,36],1225:[7,18,20,21,39,43],1226:[4,6,13,17,26,28],
+1227:[1,14,16,34,41,44],1228:[24,29,30,31,35,44],1229:[12,13,29,34,37,42]
 };
 
-const LATEST_ROUND = 1224;
+const LATEST_ROUND = Math.max(...Object.keys(REAL_DATA).map(Number));
 document.getElementById('latest-hint').textContent = `최신: ${LATEST_ROUND}회`;
-document.getElementById('th-input').value = LATEST_ROUND + 1;
 
 function getLottoNumbers(round) {
     if (REAL_DATA[round]) return REAL_DATA[round];
-    let seed = round * 7919;
-    const nums = [];
-    while (nums.length < 6) {
-        seed = (seed * 1664525 + 1013904223) & 0x7fffffff;
-        const n = (seed % 45) + 1;
-        if (!nums.includes(n)) nums.push(n);
+    return null; // 데이터 없으면 null
+}
+
+// ★ 핵심: 10회 주기 분석 함수
+// targetRound 기준으로 -10, -20, -30 ... 1020 이상인 회차만 수집
+function getCycleRounds(targetRound) {
+    const rounds = [];
+    let r = targetRound - 10;
+    while (r >= 1020) {
+        if (REAL_DATA[r]) rounds.push(r);
+        r -= 10;
     }
-    return nums.sort((a, b) => a - b);
+    return rounds;
 }
 
 function analyzeAndGenerate() {
@@ -657,7 +310,6 @@ function analyzeAndGenerate() {
         let val = parseInt(document.getElementById(`fix${i}`).value);
         if(!isNaN(val) && val >= 1 && val <= 45 && !fixedNums.includes(val)) fixedNums.push(val);
     }
-
     const excludeNums = [];
     for(let i=1; i<=18; i++) {
         let val = parseInt(document.getElementById(`ex${i}`).value);
@@ -676,103 +328,103 @@ function analyzeAndGenerate() {
 
     btn.disabled = true;
     btn.textContent = '추첨 중..';
-    ballContainer.innerHTML = '<div style="color:var(--accent); font-size:0.8rem; text-align:center; padding:15px 0;">조건 대입 중...</div>';
+    ballContainer.innerHTML = '<div style="color:var(--accent);font-size:0.8rem;text-align:center;padding:15px 0;">10회 주기 분석 중...</div>';
 
     setTimeout(() => {
-        let checkRounds = [];
-        let cur = targetRound - 1;
-        for(let i=0; i<10; i++) {
-            if(cur >= 1020) { checkRounds.push(cur); cur--; }
+        // ★ 10회 주기 회차 수집
+        const cycleRounds = getCycleRounds(targetRound);
+
+        if (cycleRounds.length === 0) {
+            alert(`${targetRound}회 기준으로 10회 주기(1020회 이상) 데이터가 없습니다.`);
+            btn.disabled = false;
+            btn.textContent = '즉시 추첨 🎯';
+            ballContainer.innerHTML = '<span class="ball-placeholder">데이터 부족 — 더 높은 회차를 입력해주세요</span>';
+            return;
         }
 
-        let validPairs = checkRounds.map(r => ({ round: r, nums: getLottoNumbers(r) }));
-        
-        // 과거 패턴 기반 타겟 홀짝 비율 추출
-        const ratioPatterns = { "6:0":0, "5:1":0, "4:2":0, "3:3":0, "2:4":0, "1:5":0, "0:6":0 };
+        // ★ 주기 회차별 데이터 수집 및 패턴 분석
+        const cycleData = cycleRounds.map(r => ({ round: r, nums: getLottoNumbers(r) }));
+
+        const ratioPatterns = {"6:0":0,"5:1":0,"4:2":0,"3:3":0,"2:4":0,"1:5":0,"0:6":0};
         const numberFrequency = {};
         for(let i=1; i<=45; i++) numberFrequency[i] = 0;
 
-        validPairs.forEach(({ nums }) => {
+        cycleData.forEach(({ nums }) => {
             let odd = 0, even = 0;
             nums.forEach(n => {
-                if (n % 2 !== 0) odd++; else even++;
+                if(n % 2 !== 0) odd++; else even++;
                 numberFrequency[n]++;
             });
             const key = `${odd}:${even}`;
-            if (key in ratioPatterns) ratioPatterns[key]++;
+            if(key in ratioPatterns) ratioPatterns[key]++;
         });
 
+        // 홀짝 최빈 패턴
         let bestPattern = "3:3", maxCount = -1;
-        for (const key in ratioPatterns) {
-            if (ratioPatterns[key] > maxCount) { maxCount = ratioPatterns[key]; bestPattern = key; }
+        for(const key in ratioPatterns) {
+            if(ratioPatterns[key] > maxCount) { maxCount = ratioPatterns[key]; bestPattern = key; }
         }
-        
         const targetOdd = parseInt(bestPattern.split(":")[0]);
         const targetEven = parseInt(bestPattern.split(":")[1]);
 
+        // 총합 평균 계산 (주기 회차 기준)
+        const sumList = cycleData.map(({nums}) => nums.reduce((a,b)=>a+b,0));
+        const avgSum = Math.round(sumList.reduce((a,b)=>a+b,0) / sumList.length);
+        const sumMin = Math.max(80, avgSum - 40);
+        const sumMax = Math.min(210, avgSum + 40);
+
+        // 가중치 풀 (주기 회차 빈도 기반)
         let weightedPool = [];
-        for (let i = 1; i <= 45; i++) {
-            if (excludeNums.includes(i)) continue;
+        for(let i=1; i<=45; i++) {
+            if(excludeNums.includes(i)) continue;
             let count = numberFrequency[i] || 0;
             let weight = count === 0 ? 1 : (count * 2) + 1;
-            for (let w = 0; w < weight; w++) weightedPool.push(i);
+            for(let w=0; w<weight; w++) weightedPool.push(i);
         }
 
         const allGames = [];
-        const gameLabels = ['A', 'B', 'C', 'D', 'E'];
+        const gameLabels = ['A','B','C','D','E'];
         let logDetails = [];
 
-        for (let g = 0; g < 5; g++) {
-            let finalNums = [];
-            let attempts = 0;
-            let totalSum = 0;
-            let consecutiveCount = 0;
-            let sameTailCount = 0;
-            let finalOdd = 0;
-            let finalEven = 0;
+        for(let g=0; g<5; g++) {
+            let finalNums = [], attempts = 0;
+            let totalSum = 0, consecutiveCount = 0, sameTailCount = 0;
+            let finalOdd = 0, finalEven = 0;
 
-            while (attempts < 5000) {
+            while(attempts < 5000) {
                 attempts++;
                 let candidate = [...fixedNums];
-                let curOdd = candidate.filter(n => n % 2 !== 0).length;
-                let curEven = candidate.filter(n => n % 2 === 0).length;
-
+                let curOdd = candidate.filter(n => n%2!==0).length;
+                let curEven = candidate.filter(n => n%2===0).length;
                 let localPool = [...weightedPool].sort(() => Math.random() - 0.5);
 
-                for (const n of localPool) {
-                    if (candidate.length >= 6) break;
-                    if (candidate.includes(n)) continue;
-
-                    if (n % 2 !== 0 && curOdd < targetOdd) { candidate.push(n); curOdd++; }
-                    else if (n % 2 === 0 && curEven < targetEven) { candidate.push(n); curEven++; }
+                for(const n of localPool) {
+                    if(candidate.length >= 6) break;
+                    if(candidate.includes(n)) continue;
+                    if(n%2!==0 && curOdd < targetOdd) { candidate.push(n); curOdd++; }
+                    else if(n%2===0 && curEven < targetEven) { candidate.push(n); curEven++; }
                 }
-
-                while (candidate.length < 6) {
-                    let r = Math.floor(Math.random() * 45) + 1;
-                    if (!candidate.includes(r) && !excludeNums.includes(r)) {
-                        candidate.push(r);
-                    }
+                while(candidate.length < 6) {
+                    let r = Math.floor(Math.random()*45)+1;
+                    if(!candidate.includes(r) && !excludeNums.includes(r)) candidate.push(r);
                 }
+                candidate.sort((a,b)=>a-b);
 
-                candidate.sort((a, b) => a - b);
-
-                totalSum = candidate.reduce((acc, v) => acc + v, 0);
-                if (totalSum < 80 || totalSum > 190) continue; 
+                totalSum = candidate.reduce((acc,v)=>acc+v,0);
+                if(totalSum < sumMin || totalSum > sumMax) continue;
 
                 consecutiveCount = 0;
-                for (let i = 0; i < candidate.length - 1; i++) {
-                    if (candidate[i+1] - candidate[i] === 1) consecutiveCount++;
+                for(let i=0; i<candidate.length-1; i++) {
+                    if(candidate[i+1]-candidate[i]===1) consecutiveCount++;
                 }
-
-                let tails = candidate.map(n => n % 10);
-                let tailMap = {};
-                sameTailCount = 0;
-                tails.forEach(t => tailMap[t] = (tailMap[t] || 0) + 1);
-                for(let k in tailMap) { if(tailMap[k] >= 2) sameTailCount += (tailMap[k] - 1); }
+                let tails = candidate.map(n=>n%10);
+                let tailMap = {}; sameTailCount = 0;
+                tails.forEach(t => tailMap[t]=(tailMap[t]||0)+1);
+                for(let k in tailMap) { if(tailMap[k]>=2) sameTailCount+=(tailMap[k]-1); }
 
                 finalNums = candidate;
-                finalOdd = candidate.filter(n => n % 2 !== 0).length;
-                finalEven = candidate.filter(n => n % 2 === 0).length;
+                finalOdd = candidate.filter(n=>n%2!==0).length;
+                finalEven = candidate.filter(n=>n%2===0).length;
                 break;
             }
 
@@ -783,52 +435,44 @@ function analyzeAndGenerate() {
                     if(!finalNums.includes(r) && !excludeNums.includes(r)) finalNums.push(r);
                 }
                 finalNums.sort((a,b)=>a-b);
-                totalSum = finalNums.reduce((acc, v) => acc + v, 0);
-                finalOdd = finalNums.filter(n => n % 2 !== 0).length;
-                finalEven = finalNums.filter(n => n % 2 === 0).length;
+                totalSum = finalNums.reduce((acc,v)=>acc+v,0);
+                finalOdd = finalNums.filter(n=>n%2!==0).length;
+                finalEven = finalNums.filter(n=>n%2===0).length;
             }
 
             allGames.push({ label: gameLabels[g], nums: finalNums });
-            
-            // 🌟 필터링 상세 정보 완전 노출 문자열 생성
             logDetails.push(`
                 <div class="report-section">
                     <strong>[${gameLabels[g]} 게임 상세 리포트]</strong><br>
-                    <div class="report-line"><span>• 번호 구성:</span> <span>${finalNums.join(', ')}</span></div>
-                    <div class="report-line"><span>• ① 홀짝 필터:</span> <span>홀 ${finalOdd} : 짝 ${finalEven} (균형합격)</span></div>
-                    <div class="report-line"><span>• ② 총합 필터:</span> <span>${totalSum} (기준 80~190 이내 만족)</span></div>
-                    <div class="report-line"><span>• ③ 연번 필터:</span> <span>${consecutiveCount}쌍 검출 (임계치 만족)</span></div>
-                    <div class="report-line"><span>• ④ 동끝수 필터:</span> <span>${sameTailCount}쌍 존재 (동끝 과밀화 방지 완료)</span></div>
+                    <div class="report-line"><span>• 번호 구성:</span><span>${finalNums.join(', ')}</span></div>
+                    <div class="report-line"><span>• ① 홀짝 필터:</span><span>홀 ${finalOdd} : 짝 ${finalEven} (주기 최빈 ${bestPattern})</span></div>
+                    <div class="report-line"><span>• ② 총합 필터:</span><span>${totalSum} (주기 평균 ${avgSum} ± 40 범위)</span></div>
+                    <div class="report-line"><span>• ③ 연번 필터:</span><span>${consecutiveCount}쌍 검출</span></div>
+                    <div class="report-line"><span>• ④ 동끝수 필터:</span><span>${sameTailCount}쌍 존재</span></div>
                 </div>
             `);
         }
 
-        // 구동 구슬 렌더링
+        // 구슬 렌더링
         ballContainer.innerHTML = '';
         allGames.forEach((game) => {
             const row = document.createElement('div');
             row.classList.add('game-row');
-            
             const label = document.createElement('div');
             label.classList.add('game-label');
             label.textContent = game.label;
             row.appendChild(label);
-
             const rowBalls = document.createElement('div');
             rowBalls.classList.add('ball-row');
-
-            game.nums.forEach((n) => {
+            game.nums.forEach(n => {
                 const ball = document.createElement('div');
                 ball.classList.add('ball');
-                if (n <= 10) ball.classList.add('r1');
-                else if (n <= 20) ball.classList.add('r2');
-                else if (n <= 30) ball.classList.add('r3');
-                else if (n <= 40) ball.classList.add('r4');
+                if(n<=10) ball.classList.add('r1');
+                else if(n<=20) ball.classList.add('r2');
+                else if(n<=30) ball.classList.add('r3');
+                else if(n<=40) ball.classList.add('r4');
                 else ball.classList.add('r5');
-
-                if(fixedNums.includes(n)) {
-                    ball.style.boxShadow = "0 0 10px #2ecc71, inset 0 0 5px rgba(255,255,255,0.6)";
-                }
+                if(fixedNums.includes(n)) ball.style.boxShadow = "0 0 10px #2ecc71, inset 0 0 5px rgba(255,255,255,0.6)";
                 ball.textContent = n;
                 rowBalls.appendChild(ball);
             });
@@ -836,15 +480,30 @@ function analyzeAndGenerate() {
             ballContainer.appendChild(row);
         });
 
-        const fixStr = fixedNums.length > 0 ? fixedNums.join(', ') + '번' : '없음';
-        const exStr = excludeNums.length > 0 ? excludeNums.join(', ') + '번' : '없음';
+        // 주기 회차 목록 테이블 생성
+        const cycleTableRows = cycleData.map(({round, nums}) => {
+            const s = nums.reduce((a,b)=>a+b,0);
+            const o = nums.filter(n=>n%2!==0).length;
+            return `<tr><td>${round}회</td><td>${nums.join(', ')}</td><td>${s}</td><td>홀${o}:짝${6-o}</td></tr>`;
+        }).join('');
 
-        // 🌟 상단 요약 + 하단 5게임 무삭제 디테일 설명 통합
+        const fixStr = fixedNums.length > 0 ? fixedNums.join(', ')+'번' : '없음';
+        const exStr = excludeNums.length > 0 ? excludeNums.join(', ')+'번' : '없음';
+
         analysisBox.innerHTML = `
-⚙️ <strong>[커스텀 셋팅 값]</strong><br>
-• 고정수 리스트: <span style="color:#2ecc71">${fixStr}</span><br>
-• 제외수 리스트: <span style="color:#e74c3c">${exStr}</span><br>
-• 최근 10개 회차 기반 홀짝 타겟 비율: <span style="color:var(--accent)">홀 ${targetOdd} : 짝 ${targetEven}</span><br>
+⚙️ <strong>[10회 주기 분석 셋팅]</strong><br>
+• 분석 회차: <span style="color:var(--accent)">${targetRound}회</span> 기준 → 10회 간격 역추적<br>
+• 수집된 주기 회차: <span style="color:var(--accent)">${cycleRounds.join(', ')}회 (총 ${cycleRounds.length}개)</span><br>
+• 고정수: <span style="color:#2ecc71">${fixStr}</span> / 제외수: <span style="color:#e74c3c">${exStr}</span><br>
+• 주기 최빈 홀짝 패턴: <span style="color:var(--accent)">홀 ${targetOdd} : 짝 ${targetEven}</span> (${maxCount}회 출현)<br>
+• 주기 총합 평균: <span style="color:var(--accent)">${avgSum}</span> → 적용 범위 ${sumMin}~${sumMax}<br>
+<div class="report-section">
+<strong>[주기 회차 데이터]</strong>
+<table class="cycle-table">
+<tr><th>회차</th><th>당첨번호</th><th>합계</th><th>홀짝</th></tr>
+${cycleTableRows}
+</table>
+</div>
 ${logDetails.join('')}
         `;
 
