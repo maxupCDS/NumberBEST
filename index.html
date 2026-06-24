@@ -129,7 +129,7 @@
     <div class="card">
         <div class="api-badge">
             <div class="dot"></div>
-            실제 당첨번호 210회차 내장 데이터 (1020~1229회) · 10회 주기 분석
+            실제 당첨번호 210회차 내장 데이터 (1030~1229회) · 10회 주기 분석
         </div>
 
         <div class="input-label">
@@ -178,7 +178,7 @@
             </div>
         </div>
         <div class="info-box">
-            ⚡ <span>10회 주기 분석</span>: 입력 회차 기준으로 -10, -20, -30... 간격의 회차를 1020회까지 역추적해 패턴을 추출합니다.
+            ⚡ <span>10회 주기 분석</span>: 입력 회차 기준으로 -10, -20, -30... 간격의 회차를 1030회까지 역추적해 패턴을 추출합니다.
         </div>
     </div>
 
@@ -417,14 +417,14 @@ function getLottoNumbers(round) {
 }
 
 // ★ 핵심: 10회 주기 분석 함수
-// targetRound 기준으로 -10, -20, -30 ... 1020 이상인 회차만 수집
+// targetRound 기준으로 -10, -20, -30 ... 1030 이상인 회차만 수집
 // 수정한 함수: targetRound의 주기(끝자리 일치 라인)를 정확히 추적
 function getCycleRounds(targetRound) {
     const rounds = [];
     // 입력된 회차에서 정확히 10회를 뺀 과거 회차부터 역추적 시작
     let r = targetRound - 10; 
     
-    while (r >= 1020) {
+    while (r >= 1030) {
         // 내장 데이터(REAL_DATA)에 실제로 존재하는 회차만 수집
         if (REAL_DATA[r]) {
             rounds.push(r);
@@ -437,7 +437,7 @@ function getCycleRounds(targetRound) {
 function analyzeAndGenerate() {
     const targetRound = parseInt(document.getElementById('th-input').value);
     
-    // 최소 1030회 이상은 입력해야 최소 1개 이상의 과거 주기 데이터(1020회)가 확보됩니다.
+    // 최소 1030회 이상은 입력해야 최소 1개 이상의 과거 주기 데이터(1030회)가 확보됩니다.
     if (isNaN(targetRound) || targetRound < 1030) {
         alert("최소 1030회 이상의 회차를 입력해주세요. (10회 주기 데이터 역추적용)");
         return;
@@ -481,7 +481,7 @@ function analyzeAndGenerate() {
         const cycleRounds = getCycleRounds(targetRound);
 
         if (cycleRounds.length === 0) {
-            alert(`${targetRound}회 기준으로 10회 주기(1020회 이상) 데이터가 없습니다.`);
+            alert(`${targetRound}회 기준으로 10회 주기(1030회 이상) 데이터가 없습니다.`);
             btn.disabled = false;
             btn.textContent = '즉시 추첨 🎯';
             ballContainer.innerHTML = '<span class="ball-placeholder">데이터 부족 — 더 높은 회차를 입력해주세요</span>';
