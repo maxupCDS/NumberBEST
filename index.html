@@ -428,11 +428,17 @@ function getLottoNumbers(round) {
 
 // ★ 핵심: 10회 주기 분석 함수
 // targetRound 기준으로 -10, -20, -30 ... 1020 이상인 회차만 수집
+// 수정한 함수: targetRound의 주기(끝자리 일치 라인)를 정확히 추적
 function getCycleRounds(targetRound) {
     const rounds = [];
-    let r = targetRound - 10;
+    // 입력된 회차에서 정확히 10회를 뺀 과거 회차부터 역추적 시작
+    let r = targetRound - 10; 
+    
     while (r >= 1020) {
-        if (REAL_DATA[r]) rounds.push(r);
+        // 내장 데이터(REAL_DATA)에 실제로 존재하는 회차만 수집
+        if (REAL_DATA[r]) {
+            rounds.push(r);
+        }
         r -= 10;
     }
     return rounds;
@@ -440,10 +446,20 @@ function getCycleRounds(targetRound) {
 
 function analyzeAndGenerate() {
     const targetRound = parseInt(document.getElementById('th-input').value);
-    if (isNaN(targetRound) || targetRound < 2) {
-        alert("2회 이상의 회차를 입력해주세요.");
+    
+    // 최소 1030회 이상은 입력해야 최소 1개 이상의 과거 주기 데이터(1020회)가 확보됩니다.
+    if (isNaN(targetRound) || targetRound < 1030) {
+        alert("최소 1030회 이상의 회차를 입력해주세요. (10회 주기 데이터 역추적용)");
         return;
     }
+    
+    // 최대 입력 제한 유동적 설정 (내장된 최신 회차 + 10회까지만 분석 가능하도록 제한)
+    if (targetRound > LATEST_ROUND + 10) {
+        alert(`보유한 최신 데이터는 ${LATEST_ROUND}회입니다. 분석 가능한 최대 회차는 ${LATEST_ROUND + 10}회입니다.`);
+        return;
+    }
+
+    // ... 이하 기존 코드 동일 ...
 
     const fixedNums = [];
     for(let i=1; i<=6; i++) {
